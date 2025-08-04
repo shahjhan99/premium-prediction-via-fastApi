@@ -8,14 +8,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: production  # Added for better tracking
-    permissions:
-      id-token: write  # Required for Azure auth
-      contents: read
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4  # Updated to latest version
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -28,9 +24,8 @@ jobs:
           pip install -r requirements.txt
 
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3  # Updated to v3
+        uses: azure/webapps-deploy@v2
         with:
-          app-name: 'FastApiPrediction'  # Exact name from Azure
+          app-name: FastApiPrediction
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
-          slot-name: 'production'  # Explicit slot name
