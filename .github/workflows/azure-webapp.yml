@@ -3,28 +3,34 @@ name: Deploy FastAPI to Azure Web App
 on:
   push:
     branches:
-      - main  # Change this if your branch is different
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: production  # Added for better tracking
+    permissions:
+      id-token: write  # Required for Azure auth
+      contents: read
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to latest version
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'  # Change if needed
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
+        uses: azure/webapps-deploy@v3  # Updated to v3
         with:
-          app-name: FastApiPrediction
+          app-name: 'FastApiPrediction'  # Exact name from Azure
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
           package: .
+          slot-name: 'production'  # Explicit slot name
